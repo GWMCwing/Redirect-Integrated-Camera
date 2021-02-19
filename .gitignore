@@ -1,3 +1,7 @@
 /camera/libraries
 /host/libraries
 host.js
+/host/cert.pem
+/host/key.pem
+/camera/cert.pem
+/camera/key.pem
