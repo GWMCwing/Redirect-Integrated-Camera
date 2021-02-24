@@ -5,3 +5,6 @@ host.js
 /host/key.pem
 /camera/cert.pem
 /camera/key.pem
+/host/node_modules
+/camera/node_modules
+.cmd

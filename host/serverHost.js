@@ -1,19 +1,26 @@
 //! https://github.com/processing/p5.js/wiki/p5.js,-node.js,-socket.io
-// HTTP Portion
-var https = require('https');
-// Path module
-var path = require('path');
 
+// HTTP Portion
+const https = require('https');
+// Path module
+const path = require('path');
+// const express = require('express');
 // Using the filesystem module
 var fs = require('fs');
+const port = 8000;
+const port2 = 8001;
+
+// const app = express();
+
 const options = {
   key: fs.readFileSync('key.pem'),
   cert: fs.readFileSync('cert.pem'),
 };
-var server = https.createServer(options, handleRequest);
-server.listen(8000);
 
-console.log('Server started on port 8000');
+var server = https.createServer(options, handleRequest);
+server.listen(port);
+// app.listen(port);
+console.log(`Server started on port ${port}`);
 
 function handleRequest(req, res) {
   // What did we request?
@@ -22,6 +29,10 @@ function handleRequest(req, res) {
   // If blank let's ask for index.html
   if (pathname == '/') {
     pathname = '/index.html';
+  } else if (pathname == '/data.json') {
+    console.log('request json');
+
+    return;
   }
 
   // Ok what's our file extension
@@ -32,6 +43,7 @@ function handleRequest(req, res) {
     '.html': 'text/html',
     '.js': 'text/javascript',
     '.css': 'text/css',
+    '.json': 'text/json',
   };
   // What is it?  Default to plain text
 
@@ -52,4 +64,20 @@ function handleRequest(req, res) {
       res.end(data);
     }
   );
+}
+
+setInterval(getJson, 15);
+
+async function getJson() {
+  await fetch(`192.168.8.6:${port2}/data.json`)
+    .then((data) => {
+      fs.writeFile('data.json', JSON.stringify(data), function (err) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
